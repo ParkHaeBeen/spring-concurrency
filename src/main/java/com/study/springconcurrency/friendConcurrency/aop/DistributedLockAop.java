@@ -25,10 +25,10 @@ public class DistributedLockAop {
     final MethodSignature signature = (MethodSignature) joinPoint.getSignature();
     final Method method = signature.getMethod();
     final DistributedLock distributedLock = method.getAnnotation(DistributedLock.class);
-
     final String key = createKey(signature.getParameterNames(), joinPoint.getArgs(),
         distributedLock.key());
 
+    long startTime = System.currentTimeMillis();
     final RLock lock = redissonClient.getLock(key);
 
     try{
@@ -45,6 +45,9 @@ public class DistributedLockAop {
     }finally {
       try {
         lock.unlock();
+        long endTime = System.currentTimeMillis();
+        long elapsedTime = endTime - startTime;
+        log.info("lock 획득과 놓기 = {}",elapsedTime);
         log.info("redis lock end");
       }catch (IllegalMonitorStateException e){
         log.info("redis unlock already");

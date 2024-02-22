@@ -13,6 +13,8 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/concurrency
     username: root
     password:
+    hikari:
+      maximum-pool-size: 40
   redis:
     host: localhost
     port: 6379
